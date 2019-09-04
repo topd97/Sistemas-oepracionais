@@ -12,29 +12,33 @@ vector<int> ingressos, temposDeExecucao, prioridades;
 int preempcao = 2;
 
 int makeFCFS(){
+	cout << "Iniciando o FCFS" << endl;
     int tempoDeExecucao = 0;
     for( int processo=0; processo<temposDeExecucao.size(); processo++){
         tempoDeExecucao += temposDeExecucao[processo];
     }
+    cout << "Finalizando o FCFS" << endl;
     return tempoDeExecucao;
 }
 
 int makeRR(){
+	cout << "Iniciando o RR" << endl;
+	
     int tempoDeExecucao = 0;
     queue<int> fila;
     vector<int> copiaIngressos, copiaTemposDeExecucao;
-    list<int> processos;
-
     vector<int> test;
-
     int temp, quantProcessos;
     int next = 0;
 
     copiaIngressos = ingressos;
     copiaTemposDeExecucao = temposDeExecucao;
+    
+    list<int> processos;
     for(int i=0;i<quant;i++ ){
         processos.push_back(i);
     }
+    
     while(!processos.empty()){
 
         for( auto processo: processos){
@@ -46,12 +50,12 @@ int makeRR(){
         if(tempoDeExecucao == next){
 
             temp = fila.front();
-            cout << "temp: " << temp << endl;
+            cout << "Executando processo: " << temp << endl;
             copiaIngressos[temp] += tempoDeExecucao + preempcao;
             copiaTemposDeExecucao[temp] -= preempcao;
             
             if(copiaTemposDeExecucao[temp] < 0) {
-                cout << temp << endl;
+                //cout << temp << endl;
 
                 next += preempcao + copiaTemposDeExecucao[temp];
                 copiaIngressos[temp] = -1;
@@ -59,7 +63,7 @@ int makeRR(){
             }
             else {
                 if(copiaTemposDeExecucao[temp] == 0){
-                    cout << temp << endl;
+                    //cout << temp << endl;
                     copiaIngressos[temp] = -1;
                     processos.remove(temp);
                 }
@@ -69,10 +73,40 @@ int makeRR(){
         }
         tempoDeExecucao += 1;
     }
+    cout << "Finalizando o RR" << endl;
     return tempoDeExecucao;
 }
 
 int makeSJF(){
+    cout << "Iniciando o SJF" << endl;
+	
+	int tempoDeExecucao = 0;
+	vector<int> copiaTemposDeExecucao;
+	int menorTempo = -1;
+	int escolhido = -1;
+	
+	list<int> processos;
+    for(int i=0;i<quant;i++ ){
+        processos.push_back(i);
+    }
+	
+	copiaTemposDeExecucao = temposDeExecucao;
+	while(!processos.empty()){
+		for( auto processo: processos){
+			if ( ingressos[processo] <= tempoDeExecucao && (copiaTemposDeExecucao[processo] < menorTempo || menorTempo == -1 )){
+				menorTempo = copiaTemposDeExecucao[processo];
+				escolhido = processo;
+			}
+		} 
+		cout << "Executando processo: " << escolhido << endl;
+		tempoDeExecucao += copiaTemposDeExecucao[escolhido];
+		processos.remove(escolhido);
+		menorTempo = -1;
+		escolhido = -1;
+	}
+    cout << "Finalizando o SJF" << endl;
+    
+    return tempoDeExecucao;
 
 }
 
@@ -120,13 +154,14 @@ int main(){
     tempoPRIOd = makePRIOd();
     
     
-    cin >> a;
-    cout << "Hello wordl" << endl;
-    cout << quant << endl;
-    cout << ingressos[0] << " " << ingressos[1] << " " << ingressos[2] << " " << ingressos[3] << " " << ingressos[4] << " " << endl;
-    cout << temposDeExecucao[0] << " " << temposDeExecucao[1] << " " << temposDeExecucao[2] << " " << temposDeExecucao[3] << " " << temposDeExecucao[4] << " " << endl;
-    cout << prioridades[0] << " " << prioridades[1] << " " << prioridades[2] << " " << prioridades[3] << " " << prioridades[4] << " " << endl;
+    //cin >> a;
+    //cout << "Hello wordl" << endl;
+    //cout << quant << endl;
+    //cout << ingressos[0] << " " << ingressos[1] << " " << ingressos[2] << " " << ingressos[3] << " " << ingressos[4] << " " << endl;
+    //cout << temposDeExecucao[0] << " " << temposDeExecucao[1] << " " << temposDeExecucao[2] << " " << temposDeExecucao[3] << " " << temposDeExecucao[4] << " " << endl;
+    //cout << prioridades[0] << " " << prioridades[1] << " " << prioridades[2] << " " << prioridades[3] << " " << prioridades[4] << " " << endl;
     cout << "Resultados" << endl;;
     cout << "tempoFCFS: " << tempoFCFS << endl;
     cout << "tempoRR: " << tempoRR << endl;
+    cout << "tempoSJF: " << tempoSJF << endl;
 }
