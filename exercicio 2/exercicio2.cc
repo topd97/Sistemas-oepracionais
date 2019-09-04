@@ -1,26 +1,75 @@
 #include <iostream>
 #include <string>
 #include <vector>
-using namespace std;
+#include <queue>
+#include <time.h>
+#include <list>
 
+using namespace std;
 
 int quant;
 vector<int> ingressos, temposDeExecucao, prioridades;
-
-int executaTarefaIninterrupta(int pos){
-    return temposDeExecucao[pos];
-}
+int preempcao = 2;
 
 int makeFCFS(){
     int tempoDeExecucao = 0;
     for( int processo=0; processo<temposDeExecucao.size(); processo++){
-        tempoDeExecucao += executaTarefaIninterrupta(processo);
+        tempoDeExecucao += temposDeExecucao[processo];
     }
     return tempoDeExecucao;
 }
 
 int makeRR(){
+    int tempoDeExecucao = 0;
+    queue<int> fila;
+    vector<int> copiaIngressos, copiaTemposDeExecucao;
+    list<int> processos;
 
+    vector<int> test;
+
+    int temp, quantProcessos;
+    int next = 0;
+
+    copiaIngressos = ingressos;
+    copiaTemposDeExecucao = temposDeExecucao;
+    for(int i=0;i<quant;i++ ){
+        processos.push_back(i);
+    }
+    while(!processos.empty()){
+
+        for( auto processo: processos){
+            if(copiaIngressos[processo] == tempoDeExecucao){
+                test.push_back(processo);
+                fila.push(processo);
+            }   
+        }
+        if(tempoDeExecucao == next){
+
+            temp = fila.front();
+            cout << "temp: " << temp << endl;
+            copiaIngressos[temp] += tempoDeExecucao + preempcao;
+            copiaTemposDeExecucao[temp] -= preempcao;
+            
+            if(copiaTemposDeExecucao[temp] < 0) {
+                cout << temp << endl;
+
+                next += preempcao + copiaTemposDeExecucao[temp];
+                copiaIngressos[temp] = -1;
+                processos.remove(temp);
+            }
+            else {
+                if(copiaTemposDeExecucao[temp] == 0){
+                    cout << temp << endl;
+                    copiaIngressos[temp] = -1;
+                    processos.remove(temp);
+                }
+                next += preempcao;
+            }
+            fila.pop();
+        }
+        tempoDeExecucao += 1;
+    }
+    return tempoDeExecucao;
 }
 
 int makeSJF(){
@@ -78,5 +127,6 @@ int main(){
     cout << temposDeExecucao[0] << " " << temposDeExecucao[1] << " " << temposDeExecucao[2] << " " << temposDeExecucao[3] << " " << temposDeExecucao[4] << " " << endl;
     cout << prioridades[0] << " " << prioridades[1] << " " << prioridades[2] << " " << prioridades[3] << " " << prioridades[4] << " " << endl;
     cout << "Resultados" << endl;;
-    cout << "tempoFCS: " << tempoFCS << endl;
+    cout << "tempoFCFS: " << tempoFCFS << endl;
+    cout << "tempoRR: " << tempoRR << endl;
 }
