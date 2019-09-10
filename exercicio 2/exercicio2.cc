@@ -239,7 +239,48 @@ int makePRIOp(){
 }
 
 int makePRIOd(){
+    cout << "Iniciando o PRIOd" << endl;
+	
+    int tempoDeExecucao = 0;
+    list<int> possiveis;
+    vector<int> prioE, prioD;
+    vector<int> copiaTemposDeExecucao;
 
+    copiaTemposDeExecucao = temposDeExecucao;
+
+    list<int> processos;
+    for(int i=0;i<quant;i++ ){
+        processos.push_back(i);
+        prioE[i] = prioridades[i];
+        prioD[i] = prioE[i];
+    }
+
+    while(!processos.empty()){
+        int escolhido = -1;
+        int maiorPrio = -1;
+
+        for( auto processo: processos){
+            if (maiorPrio < prioD[processo]){
+                escolhido = processo;
+                maiorPrio = prioD[processo];
+            }
+        }
+
+        for (int i=0; i< prioD.size();i++){
+            prioD[i] += 1;
+        }
+        prioD[escolhido] = prioE[escolhido];
+
+        cout << "Executando processo: " << escolhido << endl;
+        copiaTemposDeExecucao[escolhido] = copiaTemposDeExecucao[escolhido] - 1;
+        if(copiaTemposDeExecucao[escolhido] <= 0){
+            processos.remove(escolhido);
+        }
+        tempoDeExecucao += 1;
+    }
+
+    cout << "Iniciando o PRIOd" << endl;
+    return tempoDeExecucao;
 }
 
 
