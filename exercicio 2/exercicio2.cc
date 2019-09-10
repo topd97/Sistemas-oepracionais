@@ -28,7 +28,7 @@ int makeRR(){
     queue<int> fila;
     vector<int> copiaIngressos, copiaTemposDeExecucao;
     vector<int> test;
-    int temp, quantProcessos;
+    int temp;
     int next = 0;
 
     copiaIngressos = ingressos;
@@ -111,7 +111,47 @@ int makeSJF(){
 }
 
 int makeSTRF(){
+    cout << "Iniciando o STRF" << endl;
+	
+    int tempoDeExecucao = 0;
+    list<int> possiveis;
+    vector<int> copiaTemposDeExecucao;
+    vector<int> test;
 
+    copiaTemposDeExecucao = temposDeExecucao;
+    
+    list<int> processos;
+    for(int i=0;i<quant;i++ ){
+        processos.push_back(i);
+    }
+    
+    while(!processos.empty()){
+        int escolhido = -1;
+        int tempoEscolhido = -1;
+
+        for( auto processo: processos){
+            if (tempoDeExecucao == ingressos[processo]){
+                possiveis.push_back(processo);
+            }
+        }
+
+        for( auto processoEscolhido: possiveis){
+            if(escolhido == -1 || tempoEscolhido>copiaTemposDeExecucao[processoEscolhido]){
+                tempoEscolhido = copiaTemposDeExecucao[processoEscolhido];
+                escolhido = processoEscolhido;
+            }
+        }
+
+        cout << "Executando processo: " << escolhido << endl;
+        copiaTemposDeExecucao[escolhido] = copiaTemposDeExecucao[escolhido] - 1;
+        if(copiaTemposDeExecucao[escolhido] <= 0){
+            possiveis.remove(escolhido);
+            processos.remove(escolhido);
+        }
+        tempoDeExecucao += 1;
+    }
+    cout << "Finalizando o RR" << endl;
+    return tempoDeExecucao;
 }
 
 int makePRIOc(){
@@ -128,7 +168,6 @@ int makePRIOd(){
 
 
 int main(){
-    int a;
     cin >> quant;
     int temp;
     for( int i=0; i<quant;i++){
