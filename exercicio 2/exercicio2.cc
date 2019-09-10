@@ -150,7 +150,7 @@ int makeSTRF(){
         }
         tempoDeExecucao += 1;
     }
-    cout << "Finalizando o RR" << endl;
+    cout << "Finalizando o STRF" << endl;
     return tempoDeExecucao;
 }
 
@@ -194,8 +194,48 @@ int makePRIOc(){
     return tempoDeExecucao;
 }
 
-int makePRIOf(){
+int makePRIOp(){
+    cout << "Iniciando o PRIOp" << endl;
+	
+    int tempoDeExecucao = 0;
+    list<int> possiveis;
+    vector<int> copiaTemposDeExecucao;
+    vector<int> test;
 
+    copiaTemposDeExecucao = temposDeExecucao;
+    
+    list<int> processos;
+    for(int i=0;i<quant;i++ ){
+        processos.push_back(i);
+    }
+    
+    while(!processos.empty()){
+        int escolhido = -1;
+        int prioridade = -1;
+
+        for( auto processo: processos){
+            if (tempoDeExecucao == ingressos[processo]){
+                possiveis.push_back(processo);
+            }
+        }
+
+        for( auto processoEscolhido: possiveis){
+            if(escolhido == -1 || prioridade<prioridades[processoEscolhido]){
+                prioridade = prioridades[processoEscolhido];
+                escolhido = processoEscolhido;
+            }
+        }
+
+        cout << "Executando processo: " << escolhido << endl;
+        copiaTemposDeExecucao[escolhido] = copiaTemposDeExecucao[escolhido] - 1;
+        if(copiaTemposDeExecucao[escolhido] <= 0){
+            possiveis.remove(escolhido);
+            processos.remove(escolhido);
+        }
+        tempoDeExecucao += 1;
+    }
+    cout << "Finalizando o PRIOp" << endl;
+    return tempoDeExecucao;
 }
 
 int makePRIOd(){
@@ -219,13 +259,13 @@ int main(){
         prioridades.push_back(temp);
     }
 
-    int tempoFCFS, tempoRR, tempoSJF, tempoSTRF, tempoPRIOc, tempoPRIOf, tempoPRIOd;
+    int tempoFCFS, tempoRR, tempoSJF, tempoSTRF, tempoPRIOc, tempoPRIOp, tempoPRIOd;
     tempoFCFS = makeFCFS();
     tempoRR = makeRR();
     tempoSJF = makeSJF();
     tempoSTRF = makeSTRF();
     tempoPRIOc = makePRIOc();
-    tempoPRIOf = makePRIOf();
+    tempoPRIOp = makePRIOp();
     tempoPRIOd = makePRIOd();
     
     
