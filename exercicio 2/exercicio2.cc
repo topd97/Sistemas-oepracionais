@@ -155,7 +155,43 @@ int makeSTRF(){
 }
 
 int makePRIOc(){
+    cout << "Iniciando o PRIOc" << endl;
+    int tempoDeExecucao = 0;
+    list<int> possiveis;
+    vector<int> copiaIngressos;
+    copiaIngressos = ingressos;
 
+    list<int> processos;
+    for(int i=0;i<quant;i++ ){
+        processos.push_back(i);
+    }
+    
+    while(!processos.empty()){
+        int escolhido = -1;
+        int prioridade = -1;
+
+        for( auto processo: processos){
+            if (tempoDeExecucao >= copiaIngressos[processo] && copiaIngressos[processo] != -1){
+                possiveis.push_back(processo);
+                copiaIngressos[processo] = -1;
+            }
+        }
+
+        for( auto processoEscolhido: possiveis){
+            if(escolhido == -1 || prioridade<prioridades[processoEscolhido]){
+                prioridade = prioridades[processoEscolhido];
+                escolhido = processoEscolhido;
+            }
+        }
+
+        cout << "Executando processo: " << escolhido << endl;
+        possiveis.remove(escolhido);
+        processos.remove(escolhido);
+        tempoDeExecucao += temposDeExecucao[escolhido];
+    }
+    
+    cout << "Finalizando o PRIOc" << endl;
+    return tempoDeExecucao;
 }
 
 int makePRIOf(){
