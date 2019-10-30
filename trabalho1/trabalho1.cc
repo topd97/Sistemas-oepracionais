@@ -34,7 +34,6 @@ int makeFIFO(){
             }
         }
     }
-    // cout<<"FIFO: "<<falhas<<endl;
     return falhas;
 }
 int makeLRU(){
@@ -46,15 +45,7 @@ int makeLRU(){
         tempo[i]=-1;
     }
     for(int pagina : paginas){
-        // for(int i=0;i<quantQuadros;i++){
-        //     cout<<fila[i]<<" ";
-        // }
-        // cout<<endl;
-        // for(int i=0;i<quantQuadros;i++){
-        //     cout<<tempo[i]<<" ";
-        // }
-        //cout<<endl;
-        //cout<<pagina;
+        
         bool estaNaFila = false;
         for(int i=0;i<quantQuadros;i++){
             if(fila[i]==pagina){
@@ -64,7 +55,6 @@ int makeLRU(){
             }
         }
         if(!estaNaFila){
-            //cout<<" falha";
             falhas += 1;
             int maior = -1;
             int tempoMaior = -2;
@@ -86,9 +76,7 @@ int makeLRU(){
                 tempo[i]++;
             }
         }
-        //cout<<endl<<endl;
     }
-    // cout<<"LRU: "<<falhas<<endl;
     return falhas;
 }
 int makeOPT(){
@@ -117,7 +105,6 @@ int makeOPT(){
             }
         }
         if(!estaNaFila){
-			cout<< "falhas:"<<falhas<<endl;
             falhas += 1;
             int maiorPos=0;
             int paginaSelecionada=-1; 
