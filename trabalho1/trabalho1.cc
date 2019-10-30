@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <map>
+#include <queue>
 
 using namespace std;
 
@@ -93,19 +95,19 @@ int makeOPT(){
     int fila[quantQuadros];
     int falhas = 0;
     int posNaListaDePaginas =-1;
+    
+    int count =0;
+    map<int, queue<int>> mapPaginas;
+    for(int pagina: paginas){
+		mapPaginas[pagina].push(count);
+		count++;
+    }
+    
     for(int i=0;i<quantQuadros;i++){
         fila[i]=-1;
     }
+    int posAtual =0;
     for(int pagina : paginas){
-        // for(int i=0;i<quantQuadros;i++){
-        //     cout<<fila[i]<<" ";
-        // }
-        // cout<<endl;
-        // for(int i=0;i<quantQuadros;i++){
-        //     cout<<tempo[i]<<" ";
-        // }
-        //cout<<endl;
-        //cout<<pagina;
         posNaListaDePaginas++;
         bool estaNaFila = false;
         for(int i=0;i<quantQuadros;i++){
@@ -115,39 +117,56 @@ int makeOPT(){
             }
         }
         if(!estaNaFila){
-            //cout<<" falha";
+			cout<< "falhas:"<<falhas<<endl;
             falhas += 1;
-            int quantCertos = 0;
-            int certos[quantQuadros];
+            int maiorPos=0;
+            int paginaSelecionada=-1; 
+            bool inicio = true;
             for(int i=0;i<quantQuadros;i++){
-                certos[i]=0;
-            }
-            for(int i=posNaListaDePaginas;i<paginas.size();i++){
-                for (int j = 0;j<quantQuadros;j++){
-                    if(quantCertos==quantQuadros-1){
-                        break;
-                    }
-                    if(paginas[i]==fila[j] && certos[j]==0){
-                        quantCertos++;
-                        certos[j]=1;
-                    }
-                }
-                if(quantCertos==quantQuadros-1){
-                    break;
-                }
-            }
-            int sobrou;
-            for(int i=0;i<quantQuadros;i++){
-                if(certos[i]==0){
-                    sobrou=i;
-                    break;
-                }
-            }
+				if(fila[i]==-1){
+					paginaSelecionada=i;
+					inicio=true;
+					break;
+				}
+				inicio=false;
+				queue<int> listaPos = mapPaginas[fila[i]];
+				bool escolhido = false;
+				while(1){
+					if(listaPos.empty()){
+						paginaSelecionada=fila[i];
+						escolhido=true;
+						break;
+					}
+					if(listaPos.front()<posAtual){
+						listaPos.pop();
+						continue;
+					}
+					if(listaPos.front()>maiorPos){
+						maiorPos=listaPos.front();
+						paginaSelecionada=fila[i];
+					}
+					break;
+				}
+				if(escolhido){
+					break;
+				}
+			}
+			int sobrou;
+            if(inicio){
+				sobrou=paginaSelecionada;
+			}
+			else{
+				for(int i=0;i<quantQuadros;i++){
+					if(fila[i]==paginaSelecionada){
+						sobrou=i;
+						break;
+					}
+				}
+			}
             fila[sobrou]=pagina;
         }
-        //cout<<endl<<endl;
+        posAtual++;
     }
-    // cout<<"OPT: "<<falhas<<endl;
     return falhas;
 }
 
@@ -160,10 +179,13 @@ int main(int argc, char *argv[ ]){
     }
     //FIFO
     int falhasFifo = makeFIFO();
+    cout<<"terminou o FIFO"<<endl;
     //OPT
     int falhasOpt = makeOPT();
+    cout<<"terminou o FIFO"<<endl;
     //LRU
     int falhasLru = makeLRU();
+	cout<<"terminou o FIFO"<<endl;
 
     cout<<quantQuadros<<" quadros, "<<paginas.size()<<" refs: FIFO: "<<falhasFifo<<" PFs, LRU: "<<falhasLru<<" Pfs, OPT: "<<falhasOpt<<" Pfs"<<endl; 
     return 0;
