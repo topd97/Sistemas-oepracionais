@@ -251,8 +251,8 @@ int makePRIOd(){
     list<int> processos;
     for(int i=0;i<quant;i++ ){
         processos.push_back(i);
-        prioE[i] = prioridades[i];
-        prioD[i] = prioE[i];
+        prioE.push_back(prioridades[i]);
+        prioD.push_back(prioE[i]);
     }
 
     while(!processos.empty()){
@@ -320,4 +320,8 @@ int main(){
     cout << "tempoFCFS: " << tempoFCFS << endl;
     cout << "tempoRR: " << tempoRR << endl;
     cout << "tempoSJF: " << tempoSJF << endl;
+    cout << "tempoSTRF: " << tempoSTRF << endl;
+    cout << "tempoPRIOc: " << tempoPRIOc << endl;
+    cout << "tempoPRIOp: " << tempoPRIOp << endl;
+    cout << "tempoPRIOd: " << tempoPRIOd << endl;
 }
